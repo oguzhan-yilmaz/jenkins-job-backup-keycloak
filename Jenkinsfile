@@ -3,7 +3,7 @@ import groovy.json.JsonOutput
 pipeline {
     environment {
         // === KEYCLOAK ON CLUSTER VARIABLES
-        // the script filepath in your repo
+        
         KC_EXPORT_SCRIPT_REPO_FILEPATH="keycloak-auto-export-script.sh"  // TODO: fill this  
         // Check out docs to see how to create a kubeconfig file:: create-kubeconfig-for-keycloak-backups.md
         KC_SERVICE_ACCOUNT_KUBECONFIG_CREDENTIALS_ID="" // TODO: fill this
@@ -43,7 +43,7 @@ pipeline {
                     # check if the Export Script exists in the cicd repo
                     if [ ! -e "$KC_EXPORT_SCRIPT_REPO_FILEPATH" ]; then
                         echo "Directory KC_EXPORT_SCRIPT_REPO_FILEPATH=$KC_EXPORT_SCRIPT_REPO_FILEPATH does not exist."
-                        echo "Bu degiskeni tanimlaman gerek. 'cicd' reposunda bir  '.sh' bash script olmali."
+                        echo "You must define the KC_EXPORT_SCRIPT_REPO_FILEPATH variable in the Jenkinsfile."
                         exit 1
                     fi
 
@@ -73,7 +73,7 @@ pipeline {
                         exec --stdin "\$POD_NAME" -- \
                             './tmp/keycloak-auto-export-script.sh'
 
-                    echo "Export finished in keycloak pod: \$POD_NAME"
+                    echo "Export script finished running in keycloak pod: \$POD_NAME"
 
 
                     echo "Copying the \$KC_EXPORTED_ZIP_PATH_IN_CONTAINER file in the container to Jenkins workspace"
