@@ -3,7 +3,7 @@ import groovy.json.JsonOutput
 pipeline {
     environment {
         // === KEYCLOAK ON CLUSTER VARIABLES
-
+        KC_EXPORT_SCRIPT_REPO_FILEPATH="keycloak-auto-export-script.sh"  // the script filepath in your repo
         // Check out docs to see how to create a kubeconfig file:: create-kubeconfig-for-keycloak-backups.md
         KC_SERVICE_ACCOUNT_KUBECONFIG_CREDENTIALS_ID="" // TODO: fill this
         CLUSTER_NAME="" // TODO: fill this
@@ -14,13 +14,12 @@ pipeline {
         // === S3 Upload Variables (this pipeline use Huwaei S3)
         AWS_ACCESS_KEY_ID=credentials('huawei-s3-keycloak-backup-user-key-id') 
         AWS_SECRET_ACCESS_KEY=credentials('huawei-s3-keycloak-backup-user-access-key')
-        AWS_ENDPOINT_URL_S3="https://obs.tr-west-1.myhuaweicloud.com"  // remove this line to use AWS S3
         S3_BUCKET_NAME="keycloak-backup"
+        AWS_ENDPOINT_URL_S3="https://obs.tr-west-1.myhuaweicloud.com"  // remove this line to use AWS S3
 
         // === STATIC VARIABLES (DON'T CHANGE THESE!)
         DEBIAN_FRONTEND = 'noninteractive'
         // TZ = 'Europe/Istanbul'
-        KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH="keycloak-auto-export-script.sh"  // the script that will be copied to the keycloak container (in the cicd repo)
         KC_EXPORTED_ZIP_PATH_IN_CONTAINER='/tmp/keycloak-auto-backups.tar'  // this value comes from the script above
     } 
     agent {
@@ -40,15 +39,15 @@ pipeline {
                     #!/bin/bash
 
                     # check if the Export Script exists in the cicd repo
-                    if [ ! -e "$KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH" ]; then
-                        echo "Directory KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH=$KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH does not exist."
+                    if [ ! -e "$KC_EXPORT_SCRIPT_REPO_FILEPATH" ]; then
+                        echo "Directory KC_EXPORT_SCRIPT_REPO_FILEPATH=$KC_EXPORT_SCRIPT_REPO_FILEPATH does not exist."
                         echo "Bu degiskeni tanimlaman gerek. 'cicd' reposunda bir  '.sh' bash script olmali."
                         exit 1
                     fi
 
                     echo "KC_NAMESPACE=$KC_NAMESPACE"
                     echo "KC_STATEFULSET_NAME=$KC_STATEFULSET_NAME"
-                    echo "KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH=$KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH"
+                    echo "KC_EXPORT_SCRIPT_REPO_FILEPATH=$KC_EXPORT_SCRIPT_REPO_FILEPATH"
 
                     # find the ns, and pod name to exec the export script
                     export POD_NAME=\$(kubectl --kubeconfig "\$JKUBECONF" -n "\$KC_NAMESPACE" \
@@ -56,9 +55,9 @@ pipeline {
                         -o custom-columns=:metadata.name --no-headers)
                     echo "Found the Keycloak pod: POD_NAME=\$POD_NAME"
 
-                    echo "Copying the \$KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH to the pod: \$POD_NAME"
+                    echo "Copying the \$KC_EXPORT_SCRIPT_REPO_FILEPATH to the pod: \$POD_NAME"
                     kubectl --kubeconfig "\$JKUBECONF" -n "\$KC_NAMESPACE" \
-                        cp "\$KC_EXPORT_SCRIPT_CICD_REPO_FILEPATH" \
+                        cp "\$KC_EXPORT_SCRIPT_REPO_FILEPATH" \
                         "\$POD_NAME:/tmp/keycloak-auto-export-script.sh"
                     
                     

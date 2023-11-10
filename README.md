@@ -1,6 +1,7 @@
 # jenkins-job-backup-keycloak
 
-A jenkins job to backup running keycloak container in a K8s cluster
+A jenkins job to backup running bitnami Keycloak container in a K8s cluster.
+
 
 ## Index
 
@@ -25,6 +26,7 @@ A jenkins job to backup running keycloak container in a K8s cluster
   - Create a Jenkins credential of type `Secret file` with the kubeconfig file we just created
 - Copy the [keycloak-auto-export-script.sh](keycloak-auto-export-script.sh) and [Jenkinsfile](Jenkinsfile) to your CICD repo
 - Fill in the `environment` in the Jenkinsfile with your values
+  - `KC_EXPORT_SCRIPT_REPO_FILEPATH`: Relative filepath for `keycloak-auto-export-script.sh` script in your repo
   - `KC_SERVICE_ACCOUNT_KUBECONFIG_CREDENTIALS_ID`: The Jenkins credential ID of the kubeconfig file we created
   - `CLUSTER_NAME`: Your cluster name (will be used as the backup file name)
   - `KC_NAMESPACE`: Keycloak instance namespace
