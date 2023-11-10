@@ -3,20 +3,21 @@ import groovy.json.JsonOutput
 pipeline {
     environment {
         // === KEYCLOAK ON CLUSTER VARIABLES
-        KC_EXPORT_SCRIPT_REPO_FILEPATH="keycloak-auto-export-script.sh"  // the script filepath in your repo
+        // the script filepath in your repo
+        KC_EXPORT_SCRIPT_REPO_FILEPATH="keycloak-auto-export-script.sh"  // TODO: fill this  
         // Check out docs to see how to create a kubeconfig file:: create-kubeconfig-for-keycloak-backups.md
         KC_SERVICE_ACCOUNT_KUBECONFIG_CREDENTIALS_ID="" // TODO: fill this
         CLUSTER_NAME="" // TODO: fill this
         KC_NAMESPACE=""  // TODO: fill this
         KC_STATEFULSET_NAME="" // TODO: fill this
 
-
-        // === S3 Upload Variables (this pipeline use Huwaei S3)
-        AWS_ACCESS_KEY_ID=credentials('s3-keycloak-backup-user-key-id') 
-        AWS_SECRET_ACCESS_KEY=credentials('s3-keycloak-backup-user-access-key')
-        S3_BUCKET_NAME="keycloak-backup"
+        // === S3 Upload Variables
+        AWS_ACCESS_KEY_ID=credentials('s3-keycloak-backup-user-key-id') // TODO: fill this
+        AWS_SECRET_ACCESS_KEY=credentials('s3-keycloak-backup-user-access-key') // TODO: fill this
+        S3_BUCKET_NAME="keycloak-backup" // TODO: fill this
         // uncomment below to use a custom endpoint for S3 Compatible Storage
         // AWS_ENDPOINT_URL_S3="https://obs.tr-west-1.myhuaweicloud.com"  // (e.g. Customized endpoint for Huawei S3)
+
 
         // === STATIC VARIABLES (DON'T CHANGE THESE!)
         DEBIAN_FRONTEND = 'noninteractive'
