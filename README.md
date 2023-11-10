@@ -1,11 +1,12 @@
 # jenkins-job-backup-keycloak
 
-A jenkins job to backup running bitnami Keycloak container in a K8s cluster.
+A Jenkins job to backup running bitnami Keycloak container in a K8s cluster.
 
+Then it uploads the backup file to an S3 compatible storage (tested with Huawei OBS).
 
 ## Index
 
-- [Create kubeconfig for Keycloak Backups](create-kubeconfig-for-keycloak-backups.md)
+- [Create kubeconfig for Keycloak Backups.md](create-kubeconfig-for-keycloak-backups.md)
 - [keycloak-auto-export-script.sh](keycloak-auto-export-script.sh)
 - [Jenkinsfile](Jenkinsfile)
 
