@@ -12,15 +12,16 @@ pipeline {
 
 
         // === S3 Upload Variables (this pipeline use Huwaei S3)
-        AWS_ACCESS_KEY_ID=credentials('huawei-s3-keycloak-backup-user-key-id') 
-        AWS_SECRET_ACCESS_KEY=credentials('huawei-s3-keycloak-backup-user-access-key')
+        AWS_ACCESS_KEY_ID=credentials('s3-keycloak-backup-user-key-id') 
+        AWS_SECRET_ACCESS_KEY=credentials('s3-keycloak-backup-user-access-key')
         S3_BUCKET_NAME="keycloak-backup"
-        AWS_ENDPOINT_URL_S3="https://obs.tr-west-1.myhuaweicloud.com"  // remove this line to use AWS S3
+        // uncomment below to use a custom endpoint for S3 Compatible Storage
+        // AWS_ENDPOINT_URL_S3="https://obs.tr-west-1.myhuaweicloud.com"  // (e.g. Customized endpoint for Huawei S3)
 
         // === STATIC VARIABLES (DON'T CHANGE THESE!)
         DEBIAN_FRONTEND = 'noninteractive'
         // TZ = 'Europe/Istanbul'
-        KC_EXPORTED_ZIP_PATH_IN_CONTAINER='/tmp/keycloak-auto-backups.tar'  // this value comes from the script above
+        KC_EXPORTED_ZIP_PATH_IN_CONTAINER='/tmp/keycloak-auto-backups.tar'  // this value comes from the KC_EXPORT_SCRIPT_REPO_FILEPATH script
     } 
     agent {
         node {
