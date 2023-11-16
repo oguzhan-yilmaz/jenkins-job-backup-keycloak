@@ -42,7 +42,7 @@ pipeline {
 
                     # check if the Export Script exists in the cicd repo
                     if [ ! -e "$KC_EXPORT_SCRIPT_REPO_FILEPATH" ]; then
-                        echo "Directory KC_EXPORT_SCRIPT_REPO_FILEPATH=$KC_EXPORT_SCRIPT_REPO_FILEPATH does not exist."
+                        echo "Shell script KC_EXPORT_SCRIPT_REPO_FILEPATH=$KC_EXPORT_SCRIPT_REPO_FILEPATH does not exist."
                         echo "You must define the KC_EXPORT_SCRIPT_REPO_FILEPATH variable in the Jenkinsfile."
                         exit 1
                     fi
@@ -50,7 +50,8 @@ pipeline {
                     echo "KC_NAMESPACE=$KC_NAMESPACE"
                     echo "KC_STATEFULSET_NAME=$KC_STATEFULSET_NAME"
                     echo "KC_EXPORT_SCRIPT_REPO_FILEPATH=$KC_EXPORT_SCRIPT_REPO_FILEPATH"
-
+										
+                    # todo: tested with single pod keycloak deployments, this code might fail for ha setup
                     # find the ns, and pod name to exec the export script
                     export POD_NAME=\$(kubectl --kubeconfig "\$JKUBECONF" -n "\$KC_NAMESPACE" \
                         get pod -l app.kubernetes.io/name=keycloak \
@@ -125,7 +126,7 @@ pipeline {
     options {
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '30'))  // keep last N builds
-        timeout(time: 10, unit: 'MINUTES') 
+        timeout(time: 20, unit: 'MINUTES') 
     }
     // triggers {
     //     cron('0 0 * * *') // everyday at midnight
