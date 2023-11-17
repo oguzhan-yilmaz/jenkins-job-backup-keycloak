@@ -50,12 +50,13 @@ pipeline {
                     echo "KC_NAMESPACE=$KC_NAMESPACE"
                     echo "KC_STATEFULSET_NAME=$KC_STATEFULSET_NAME"
                     echo "KC_EXPORT_SCRIPT_REPO_FILEPATH=$KC_EXPORT_SCRIPT_REPO_FILEPATH"
-										
-                    # todo: tested with single pod keycloak deployments, this code might fail for ha setup
+
                     # find the ns, and pod name to exec the export script
-                    export POD_NAME=\$(kubectl --kubeconfig "\$JKUBECONF" -n "\$KC_NAMESPACE" \
+                    all_keycloak_pods=\$(kubectl --kubeconfig "\$JKUBECONF" -n "\$KC_NAMESPACE" \
                         get pod -l app.kubernetes.io/name=keycloak \
                         -o custom-columns=:metadata.name --no-headers)
+                    # get the first podname
+                    export POD_NAME=\$(echo \$all_keycloak_pods | awk '{print \$1}')
                     echo "Found the Keycloak pod: POD_NAME=\$POD_NAME"
 
                     echo "Copying the \$KC_EXPORT_SCRIPT_REPO_FILEPATH to the pod: \$POD_NAME"
@@ -126,7 +127,7 @@ pipeline {
     options {
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '30'))  // keep last N builds
-        timeout(time: 20, unit: 'MINUTES') 
+        timeout(time: 10, unit: 'MINUTES') 
     }
     // triggers {
     //     cron('0 0 * * *') // everyday at midnight
